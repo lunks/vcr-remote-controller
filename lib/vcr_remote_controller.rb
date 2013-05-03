@@ -27,13 +27,13 @@ module Rack
     end
 
     def cassettes
-      Dir["#{VCR::Config.cassette_library_dir}/**/*.yml"].map do |f| 
-        f.match(/^#{Regexp.escape(VCR::Config.cassette_library_dir.to_s)}\/(.+)\.yml/)[1]
+      Dir["#{VCR.configuration.cassette_library_dir}/**/*.yml"].map do |f|
+        f.match(/^#{Regexp.escape(VCR.configuration.cassette_library_dir.to_s)}\/(.+)\.yml/)[1]
       end
     end
 
     def current_cassette
-      VCR.current_cassette ? VCR.current_cassette.name : nil
+      cassette? ? VCR.current_cassette.name : nil
     end
 
     def current_cassette_new_recorded_interactions
@@ -41,7 +41,7 @@ module Rack
     end
 
     def cassette?
-      !(VCR.current_cassette == nil)
+      VCR.current_cassette.present?
     end
 
     def current_cassette_empty?
@@ -53,7 +53,7 @@ module Rack
     end
 
     def default_record_mode
-      VCR::Config.default_cassette_options[:record]
+      VCR.configuration.default_cassette_options[:record]
     end
 
     def current_cassette_status
@@ -95,7 +95,7 @@ module Rack
             <title>VCR Remote Controller</title>
           </head>
           <body>
-            <h1>VCR Remote Controller</h1> 
+            <h1>VCR Remote Controller</h1>
               #{current_cassette_status}
             <hr/>
             <form method="post">
